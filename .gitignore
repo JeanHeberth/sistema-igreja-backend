@@ -13,7 +13,7 @@ bin/
 *.ipr
 *.iml
 *.iws
-/github/agents
+.github/agents/
 
 # NetBeans
 nb-configuration.xml

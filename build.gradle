@@ -3,6 +3,8 @@ plugins {
     id 'io.quarkus'
 }
 
+apply from: 'versions.gradle'
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -10,10 +12,30 @@ repositories {
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+
+    // Quarkus core
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-rest'
-    testImplementation 'io.quarkus:quarkus-junit'
+    implementation 'io.quarkus:quarkus-mongodb-panache'
+    implementation 'io.quarkus:quarkus-smallrye-openapi'
+    implementation 'io.quarkus:quarkus-smallrye-jwt'
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+
+    // LangChain4j (IA/LLM)
+    implementation "io.quarkiverse.langchain4j:quarkus-langchain4j-openai:${versions.langchain4j}"
+
+    // Testcontainers para integração com MongoDB
+    testImplementation "org.testcontainers:mongodb:${versions.testcontainers}"
+    testImplementation "org.testcontainers:junit-jupiter:${versions.testcontainers}"
+
+    // JUnit 5 para testes
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
     testImplementation 'io.rest-assured:rest-assured'
+
+    // Lombok (opcional)
+    compileOnly "org.projectlombok:lombok:${versions.lombok}"
+    annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 }
 
 group = 'br.com'

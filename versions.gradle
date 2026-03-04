@@ -1,0 +1,17 @@
+// Gerenciamento centralizado de versões
+ext {
+    versions = [
+        // LangChain4j
+        langchain4j: '0.24.0',
+
+        // Testcontainers
+        testcontainers: '1.19.3',
+
+        // JUnit 5
+        junitJupiter: '5.10.0',
+
+        // Lombok
+        lombok: '1.18.32',
+    ]
+}
+
