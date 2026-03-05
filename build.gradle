@@ -16,6 +16,7 @@ dependencies {
     // Quarkus core
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-rest'
+    implementation 'io.quarkus:quarkus-rest-jackson'
     implementation 'io.quarkus:quarkus-config-yaml'
     implementation 'io.quarkus:quarkus-mongodb-panache'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
@@ -31,9 +32,9 @@ dependencies {
 
     // JUnit 5 para testes
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.quarkus:quarkus-junit5-mockito'
     testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
     testImplementation 'io.rest-assured:rest-assured'
-    // Mockito para testes unitários
     testImplementation 'org.mockito:mockito-core:5.11.0'
 
     // Lombok (opcional)
