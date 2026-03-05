@@ -22,8 +22,8 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-jwt'
     implementation 'io.quarkus:quarkus-hibernate-validator'
 
-    // LangChain4j (IA/LLM)
-    implementation "io.quarkiverse.langchain4j:quarkus-langchain4j-openai:${versions.langchain4j}"
+    // LangChain4j (IA/LLM) - desativado temporariamente por incompatibilidade de versão
+    // implementation "io.quarkiverse.langchain4j:quarkus-langchain4j-openai:${versions.langchain4j}"
 
     // Testcontainers para integração com MongoDB
     testImplementation "org.testcontainers:mongodb:${versions.testcontainers}"
@@ -33,6 +33,8 @@ dependencies {
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
     testImplementation 'io.rest-assured:rest-assured'
+    // Mockito para testes unitários
+    testImplementation 'org.mockito:mockito-core:5.11.0'
 
     // Lombok (opcional)
     compileOnly "org.projectlombok:lombok:${versions.lombok}"
