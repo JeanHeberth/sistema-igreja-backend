@@ -1,6 +1,6 @@
 package com.igreja.adapters.web;
 
-import com.igreja.adapters.web.dto.HinoRequest;
+import com.igreja.adapters.web.record.request.HinoRequest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
@@ -19,14 +19,15 @@ class HinoResourceTest {
         UUID cultoId = UUID.randomUUID();
         UUID submetidoPor = UUID.randomUUID();
 
-        HinoRequest request = new HinoRequest();
-        request.setTitulo("Hino Teste");
-        request.setAutor("Autor Teste");
-        request.setLetra("Letra de teste");
-        request.setUrlMidia("https://midia.example.com/hino.mp3");
-        request.setCoralId(coralId);
-        request.setCultoId(cultoId);
-        request.setSubmetidoPor(submetidoPor);
+        HinoRequest request = new HinoRequest(
+            "Hino Teste",
+            "Autor Teste",
+            "Letra de teste",
+            "https://midia.example.com/hino.mp3",
+            coralId,
+            cultoId,
+            submetidoPor
+        );
 
         String id =
                 given()
@@ -61,4 +62,3 @@ class HinoResourceTest {
                 .statusCode(404);
     }
 }
-

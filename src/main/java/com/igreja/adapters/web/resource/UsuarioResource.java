@@ -1,7 +1,7 @@
-package com.igreja.adapters.web;
+package com.igreja.adapters.web.resource;
 
-import com.igreja.adapters.web.dto.UsuarioRequest;
-import com.igreja.adapters.web.dto.UsuarioResponse;
+import com.igreja.adapters.web.record.request.UsuarioRequest;
+import com.igreja.adapters.web.record.request.UsuarioResponse;
 import com.igreja.application.service.UsuarioService;
 import com.igreja.domain.enums.Papel;
 import com.igreja.domain.model.Usuario;
@@ -27,19 +27,19 @@ public class UsuarioResource {
     @POST
     public Response criarUsuario(UsuarioRequest request) {
         UUID id = UUID.randomUUID();
-        Set<Papel> papeis = request.getPapeis() == null ? Set.of()
-                : request.getPapeis().stream()
+        Set<Papel> papeis = request.papeis() == null ? Set.of()
+                : request.papeis().stream()
                 .map(String::toUpperCase)
                 .map(Papel::valueOf)
                 .collect(Collectors.toSet());
 
         Usuario usuario = new Usuario(
                 id,
-                request.getNome(),
-                request.getEmail(),
-                request.getSenha(),
+                request.nome(),
+                request.email(),
+                request.senha(), // corrigido: record possui campo senha
                 papeis,
-                request.getCoralId()
+                request.coralId()
         );
 
         Usuario salvo = usuarioService.cadastrar(usuario);
@@ -97,4 +97,3 @@ public class UsuarioResource {
         return Response.ok(response).build();
     }
 }
-
