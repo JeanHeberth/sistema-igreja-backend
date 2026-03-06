@@ -2,6 +2,7 @@ package com.igreja.application.service;
 
 import com.igreja.domain.model.EventoCulto;
 import com.igreja.domain.repository.EventoCultoRepositorio;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import java.util.UUID;
 /**
  * Serviço de aplicação para operações com Evento de Culto.
  */
+@ApplicationScoped
 public class EventoCultoService {
 
     private final EventoCultoRepositorio eventoCultoRepositorio;
@@ -31,4 +33,3 @@ public class EventoCultoService {
         return eventoCultoRepositorio.findAll();
     }
 }
-
