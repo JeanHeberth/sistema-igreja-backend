@@ -44,6 +44,8 @@ public final class DomainTestFactory {
         );
     }
 
+
+
     public static Hino novoHinoDefault() {
         UUID coralId = UUID.randomUUID();
         UUID cultoId = UUID.randomUUID();
@@ -122,5 +124,6 @@ public final class DomainTestFactory {
         UUID cultoId = UUID.randomUUID();
         return novoVoto(hinoId, usuarioId, cultoId);
     }
-}
+
+    }
 

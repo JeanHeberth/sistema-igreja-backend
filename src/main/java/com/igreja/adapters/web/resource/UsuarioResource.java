@@ -5,6 +5,7 @@ import com.igreja.adapters.web.record.request.UsuarioResponse;
 import com.igreja.application.service.UsuarioService;
 import com.igreja.domain.enums.Papel;
 import com.igreja.domain.model.Usuario;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -95,5 +96,12 @@ public class UsuarioResource {
         );
 
         return Response.ok(response).build();
+    }
+
+    @GET
+    @RolesAllowed({"USER", "ADMIN"})
+    public Response listarUsuarios() {
+        // Lógica para listar usuários
+        return Response.ok(/* lista de usuários */).build();
     }
 }

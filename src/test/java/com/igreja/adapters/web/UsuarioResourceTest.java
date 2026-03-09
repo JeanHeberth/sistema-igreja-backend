@@ -57,11 +57,23 @@ class UsuarioResourceTest {
     void buscarPorId_quandoNaoExiste_deveRetornar404() {
         UUID id = UUID.randomUUID();
 
+        // Obter token válido
+        String token = given()
+                .contentType(ContentType.JSON)
+                .body("{\"email\": \"admin@email.com\",\"senha\": \"admin123\"}")
+                .when()
+                .post("/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("token");
+
         given()
+            .header("Authorization", "Bearer " + token)
         .when()
-                .get("/usuarios/" + id)
+            .get("/usuarios/" + id)
         .then()
-                .statusCode(404);
+            .statusCode(404);
     }
 
     @Dependent

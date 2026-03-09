@@ -51,14 +51,26 @@ class HinoResourceTest {
                 .body("titulo", Matchers.equalTo("Hino Teste"));
     }
 
-    @Test
-    void buscarPorId_quandoNaoExiste_deveRetornar404() {
-        UUID id = UUID.randomUUID();
+        @Test
+        void buscarPorId_quandoNaoExiste_deveRetornar404() {
+                UUID id = UUID.randomUUID();
 
-        given()
-        .when()
-                .get("/hinos/" + id)
-        .then()
-                .statusCode(404);
-    }
+                // Obter token válido
+                String token = given()
+                                .contentType(ContentType.JSON)
+                                .body("{\"email\": \"admin@email.com\",\"senha\": \"admin123\"}")
+                                .when()
+                                .post("/login")
+                                .then()
+                                .statusCode(200)
+                                .extract()
+                                .path("token");
+
+                given()
+                        .header("Authorization", "Bearer " + token)
+                .when()
+                        .get("/hinos/" + id)
+                .then()
+                        .statusCode(404);
+        }
 }
