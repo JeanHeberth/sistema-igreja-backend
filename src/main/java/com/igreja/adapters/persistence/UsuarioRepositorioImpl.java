@@ -28,4 +28,17 @@ public class UsuarioRepositorioImpl implements UsuarioRepositorio {
     public void salvar(Usuario usuario) {
         storage.put(usuario.getId(), usuario);
     }
+
+    @Override
+    public synchronized boolean salvarSeEmailNaoExistir(Usuario usuario) {
+        boolean emailJaExiste = storage.values().stream()
+                .anyMatch(u -> Objects.equals(u.getEmail(), usuario.getEmail()));
+
+        if (emailJaExiste) {
+            return false;
+        }
+
+        storage.put(usuario.getId(), usuario);
+        return true;
+    }
 }

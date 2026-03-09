@@ -1,10 +1,9 @@
 package com.igreja.adapters.web.resource;
 
-import com.igreja.adapters.web.resource.support.auth.AuthRequestFactory;
-import com.igreja.adapters.web.resource.support.auth.AuthTestConstants;
-import com.igreja.adapters.web.resource.support.auth.AuthTestDataSupport;
-import com.igreja.adapters.web.resource.support.base.BaseIntegrationTest;
-import com.igreja.adapters.web.resource.support.dataBase.TestDatabaseCleaner;
+import com.igreja.adapters.web.support.auth.AuthRequestFactory;
+import com.igreja.adapters.web.support.auth.AuthTestConstants;
+import com.igreja.adapters.web.support.auth.AuthTestDataSupport;
+import com.igreja.adapters.web.support.base.BaseIntegrationTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import jakarta.inject.Inject;

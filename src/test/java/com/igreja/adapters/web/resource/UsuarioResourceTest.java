@@ -1,23 +1,27 @@
 package com.igreja.adapters.web.resource;
 
 import com.igreja.adapters.web.record.request.UsuarioRequest;
-import com.igreja.adapters.web.resource.support.auth.AuthTestDataSupport;
-import com.igreja.adapters.web.resource.support.base.BaseIntegrationTest;
-import com.igreja.adapters.web.resource.support.factory.UsuarioRequestFactory;
+import com.igreja.adapters.web.support.auth.AuthTestDataSupport;
+import com.igreja.adapters.web.support.base.BaseIntegrationTest;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
-import static com.igreja.adapters.web.resource.support.auth.AuthTokenSupport.obterTokenAdmin;
-import static com.igreja.adapters.web.resource.support.factory.UsuarioRequestFactory.*;
+import static com.igreja.adapters.web.support.auth.AuthTokenSupport.obterTokenAdmin;
+import static com.igreja.adapters.web.support.factory.UsuarioRequestFactory.*;
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 class UsuarioResourceTest extends BaseIntegrationTest {
@@ -243,6 +247,59 @@ class UsuarioResourceTest extends BaseIntegrationTest {
                 .body("error", Matchers.equalTo("Conflict"))
                 .body("message", Matchers.containsString("Email"))
                 .body("path", Matchers.containsString("usuarios"));
+    }
+
+    @Test
+    @DisplayName("Não deve permitir cadastro duplicado do mesmo email em concorrência")
+    void naoDevePermitirCadastroDuplicadoEmConcorrencia() throws Exception {
+        String token = obterTokenAdmin();
+        String email = "concorrencia@example.com";
+
+        int totalRequisicoes = 2;
+
+        ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(totalRequisicoes);
+        CountDownLatch pronto = new java.util.concurrent.CountDownLatch(totalRequisicoes);
+        CountDownLatch iniciar = new java.util.concurrent.CountDownLatch(1);
+
+        java.util.List<java.util.concurrent.Future<Integer>> futures = new java.util.ArrayList<>();
+
+        for (int i = 0; i < totalRequisicoes; i++) {
+            futures.add(executor.submit(() -> {
+                UsuarioRequest request = novoUsuarioRequestComEmail(email);
+
+                pronto.countDown();
+                iniciar.await();
+
+                return io.restassured.RestAssured.given()
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(io.restassured.http.ContentType.JSON)
+                        .body(request)
+                        .when()
+                        .post("/usuarios")
+                        .then()
+                        .extract()
+                        .statusCode();
+            }));
+        }
+
+        pronto.await();
+        iniciar.countDown();
+
+        List<Integer> resultados = new ArrayList<>();
+        for (Future<Integer> future : futures) {
+            resultados.add(future.get());
+        }
+
+        executor.shutdown();
+
+        long sucesso201 = resultados.stream().filter(status -> status == 201).count();
+        long conflito409 = resultados.stream().filter(status -> status == 409).count();
+
+        assertEquals(1, sucesso201,
+                "Deve haver exatamente um cadastro com sucesso");
+
+        assertEquals(1, conflito409,
+                "Deve haver exatamente um conflito por email duplicado");
     }
 
 }

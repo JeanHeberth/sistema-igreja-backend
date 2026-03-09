@@ -1,4 +1,4 @@
-package com.igreja.adapters.web.resource;
+package com.igreja.adapters.web;
 
 import com.igreja.adapters.web.exception.DadosInvalidosException;
 import com.igreja.adapters.web.record.request.UsuarioRequest;

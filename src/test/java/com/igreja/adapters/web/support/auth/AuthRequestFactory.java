@@ -1,4 +1,4 @@
-package com.igreja.adapters.web.resource.support.auth;
+package com.igreja.adapters.web.support.auth;
 
 import java.util.Map;
 
