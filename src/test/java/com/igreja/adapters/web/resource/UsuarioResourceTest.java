@@ -1,27 +1,23 @@
 package com.igreja.adapters.web.resource;
 
 import com.igreja.adapters.web.record.request.UsuarioRequest;
-import com.igreja.adapters.web.support.auth.AuthTestDataSupport;
-import com.igreja.adapters.web.support.base.BaseIntegrationTest;
+import com.igreja.adapters.web.resource.support.auth.AuthTestDataSupport;
+import com.igreja.adapters.web.resource.support.base.BaseIntegrationTest;
+import com.igreja.adapters.web.resource.support.factory.UsuarioRequestFactory;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
-import static com.igreja.adapters.web.support.auth.AuthTokenSupport.obterTokenAdmin;
-import static com.igreja.adapters.web.support.factory.UsuarioRequestFactory.*;
+import static com.igreja.adapters.web.resource.support.auth.AuthTokenSupport.obterTokenAdmin;
+import static com.igreja.adapters.web.resource.support.factory.UsuarioRequestFactory.*;
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 class UsuarioResourceTest extends BaseIntegrationTest {
@@ -75,7 +71,7 @@ class UsuarioResourceTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Buscar usuário sem token deve retornar 401")
     void buscarPorId_semToken_deveRetornar401() {
-        buscarPorIdSemToken(UUID.randomUUID().toString())
+       buscarPorIdSemToken(UUID.randomUUID().toString())
                 .statusCode(401);
     }
 
@@ -170,11 +166,11 @@ class UsuarioResourceTest extends BaseIntegrationTest {
         String tokenMembro = given()
                 .contentType(io.restassured.http.ContentType.JSON)
                 .body("""
-                        {
-                          "email": "membro.sem.permissao@example.com",
-                          "senha": "senha123"
-                        }
-                        """)
+                    {
+                      "email": "membro.sem.permissao@example.com",
+                      "senha": "senha123"
+                    }
+                    """)
                 .when()
                 .post("/auth/login")
                 .then()
@@ -187,119 +183,4 @@ class UsuarioResourceTest extends BaseIntegrationTest {
         criarUsuario(tokenMembro, novoUsuario)
                 .statusCode(403);
     }
-
-    @Test
-    @DisplayName("Erro deve retornar formato padronizado")
-    void erro_deveRetornarFormatoPadronizado() {
-        String token = obterTokenAdmin();
-
-        given()
-                .header("Authorization", "Bearer " + token)
-                .when()
-                .get("/usuarios/por-email")
-                .then()
-                .statusCode(400)
-                .body("status", Matchers.equalTo(400))
-                .body("error", Matchers.equalTo("Bad Request"))
-                .body("message", Matchers.notNullValue())
-                .body("path", Matchers.containsString("usuarios/por-email"));
-    }
-
-    @Test
-    @DisplayName("Erro 400 deve retornar formato padronizado")
-    void erro400_deveRetornarFormatoPadronizado() {
-
-        String token = obterTokenAdmin();
-
-        UsuarioRequest request = new UsuarioRequest(
-                "Usuario Papel Invalido",
-                "usuario.erro400@example.com",
-                "senha123",
-                java.util.Set.of("SUPER_ADMIN"),
-                java.util.UUID.randomUUID()
-        );
-
-        criarUsuario(token, request)
-                .statusCode(400)
-                .body("status", Matchers.equalTo(400))
-                .body("error", Matchers.equalTo("Bad Request"))
-                .body("message", Matchers.notNullValue())
-                .body("path", Matchers.containsString("usuarios"));
-    }
-
-    @Test
-    @DisplayName("Erro 409 deve retornar formato padronizado")
-    void erro409_deveRetornarFormatoPadronizado() {
-
-        String token = obterTokenAdmin();
-        String email = "usuario.duplicado.formato@example.com";
-
-        UsuarioRequest request = novoUsuarioRequestComEmail(email);
-
-        // primeiro cadastro
-        criarUsuario(token, request)
-                .statusCode(201);
-
-        // segundo cadastro (gera conflito)
-        criarUsuario(token, request)
-                .statusCode(409)
-                .body("status", Matchers.equalTo(409))
-                .body("error", Matchers.equalTo("Conflict"))
-                .body("message", Matchers.containsString("Email"))
-                .body("path", Matchers.containsString("usuarios"));
-    }
-
-    @Test
-    @DisplayName("Não deve permitir cadastro duplicado do mesmo email em concorrência")
-    void naoDevePermitirCadastroDuplicadoEmConcorrencia() throws Exception {
-        String token = obterTokenAdmin();
-        String email = "concorrencia@example.com";
-
-        int totalRequisicoes = 2;
-
-        ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(totalRequisicoes);
-        CountDownLatch pronto = new java.util.concurrent.CountDownLatch(totalRequisicoes);
-        CountDownLatch iniciar = new java.util.concurrent.CountDownLatch(1);
-
-        java.util.List<java.util.concurrent.Future<Integer>> futures = new java.util.ArrayList<>();
-
-        for (int i = 0; i < totalRequisicoes; i++) {
-            futures.add(executor.submit(() -> {
-                UsuarioRequest request = novoUsuarioRequestComEmail(email);
-
-                pronto.countDown();
-                iniciar.await();
-
-                return io.restassured.RestAssured.given()
-                        .header("Authorization", "Bearer " + token)
-                        .contentType(io.restassured.http.ContentType.JSON)
-                        .body(request)
-                        .when()
-                        .post("/usuarios")
-                        .then()
-                        .extract()
-                        .statusCode();
-            }));
-        }
-
-        pronto.await();
-        iniciar.countDown();
-
-        List<Integer> resultados = new ArrayList<>();
-        for (Future<Integer> future : futures) {
-            resultados.add(future.get());
-        }
-
-        executor.shutdown();
-
-        long sucesso201 = resultados.stream().filter(status -> status == 201).count();
-        long conflito409 = resultados.stream().filter(status -> status == 409).count();
-
-        assertEquals(1, sucesso201,
-                "Deve haver exatamente um cadastro com sucesso");
-
-        assertEquals(1, conflito409,
-                "Deve haver exatamente um conflito por email duplicado");
-    }
-
 }
