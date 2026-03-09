@@ -71,7 +71,7 @@ class UsuarioResourceTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Buscar usuário sem token deve retornar 401")
     void buscarPorId_semToken_deveRetornar401() {
-       buscarPorIdSemToken(UUID.randomUUID().toString())
+        buscarPorIdSemToken(UUID.randomUUID().toString())
                 .statusCode(401);
     }
 
@@ -166,11 +166,11 @@ class UsuarioResourceTest extends BaseIntegrationTest {
         String tokenMembro = given()
                 .contentType(io.restassured.http.ContentType.JSON)
                 .body("""
-                    {
-                      "email": "membro.sem.permissao@example.com",
-                      "senha": "senha123"
-                    }
-                    """)
+                        {
+                          "email": "membro.sem.permissao@example.com",
+                          "senha": "senha123"
+                        }
+                        """)
                 .when()
                 .post("/auth/login")
                 .then()
@@ -183,4 +183,66 @@ class UsuarioResourceTest extends BaseIntegrationTest {
         criarUsuario(tokenMembro, novoUsuario)
                 .statusCode(403);
     }
+
+    @Test
+    @DisplayName("Erro deve retornar formato padronizado")
+    void erro_deveRetornarFormatoPadronizado() {
+        String token = obterTokenAdmin();
+
+        given()
+                .header("Authorization", "Bearer " + token)
+                .when()
+                .get("/usuarios/por-email")
+                .then()
+                .statusCode(400)
+                .body("status", Matchers.equalTo(400))
+                .body("error", Matchers.equalTo("Bad Request"))
+                .body("message", Matchers.notNullValue())
+                .body("path", Matchers.containsString("usuarios/por-email"));
+    }
+
+    @Test
+    @DisplayName("Erro 400 deve retornar formato padronizado")
+    void erro400_deveRetornarFormatoPadronizado() {
+
+        String token = obterTokenAdmin();
+
+        UsuarioRequest request = new UsuarioRequest(
+                "Usuario Papel Invalido",
+                "usuario.erro400@example.com",
+                "senha123",
+                java.util.Set.of("SUPER_ADMIN"),
+                java.util.UUID.randomUUID()
+        );
+
+        criarUsuario(token, request)
+                .statusCode(400)
+                .body("status", Matchers.equalTo(400))
+                .body("error", Matchers.equalTo("Bad Request"))
+                .body("message", Matchers.notNullValue())
+                .body("path", Matchers.containsString("usuarios"));
+    }
+
+    @Test
+    @DisplayName("Erro 409 deve retornar formato padronizado")
+    void erro409_deveRetornarFormatoPadronizado() {
+
+        String token = obterTokenAdmin();
+        String email = "usuario.duplicado.formato@example.com";
+
+        UsuarioRequest request = novoUsuarioRequestComEmail(email);
+
+        // primeiro cadastro
+        criarUsuario(token, request)
+                .statusCode(201);
+
+        // segundo cadastro (gera conflito)
+        criarUsuario(token, request)
+                .statusCode(409)
+                .body("status", Matchers.equalTo(409))
+                .body("error", Matchers.equalTo("Conflict"))
+                .body("message", Matchers.containsString("Email"))
+                .body("path", Matchers.containsString("usuarios"));
+    }
+
 }
