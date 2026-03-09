@@ -1,5 +1,6 @@
 package com.igreja.adapters.web.resource;
 
+import com.igreja.adapters.web.exception.DadosInvalidosException;
 import com.igreja.adapters.web.record.request.UsuarioRequest;
 import com.igreja.adapters.web.record.response.UsuarioResponse;
 import com.igreja.application.service.UsuarioService;
@@ -51,6 +52,10 @@ public class UsuarioResource {
     @GET
     @Path("/por-email")
     public Response buscarPorEmail(@QueryParam("email") String email) {
+        if (email == null || email.isBlank()) {
+            throw new DadosInvalidosException("Parâmetro email é obrigatório");
+        }
+
         Optional<Usuario> usuarioOpt = usuarioService.buscarPorEmail(email);
         if (usuarioOpt.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
