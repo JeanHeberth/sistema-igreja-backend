@@ -1,4 +1,4 @@
-package com.igreja.adapters.web.record.request;
+package com.igreja.adapters.web.record.response;
 
 import java.util.Set;
 import java.util.UUID;

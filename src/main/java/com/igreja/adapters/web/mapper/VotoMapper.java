@@ -1,4 +1,4 @@
-package com.igreja.mappers;
+package com.igreja.adapters.web.mapper;
 
 import com.igreja.domain.model.Voto;
 import com.igreja.adapters.web.resource.VotacaoResource.VotoResponse;

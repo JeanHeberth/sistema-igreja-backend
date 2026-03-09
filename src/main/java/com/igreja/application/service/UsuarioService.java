@@ -1,5 +1,6 @@
 package com.igreja.application.service;
 
+import com.igreja.adapters.web.exception.RecursoDuplicadoException;
 import com.igreja.domain.model.Usuario;
 import com.igreja.domain.repository.UsuarioRepositorio;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -22,6 +23,9 @@ public class UsuarioService {
     }
 
     public Usuario cadastrar(Usuario usuario) {
+        if (usuarioRepositorio.findByEmail(usuario.getEmail()).isPresent()) {
+            throw new RecursoDuplicadoException("Email já cadastrado");
+        }
         usuarioRepositorio.salvar(usuario);
         return usuario;
     }
