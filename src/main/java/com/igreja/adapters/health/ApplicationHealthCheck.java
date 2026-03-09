@@ -14,5 +14,6 @@ public class ApplicationHealthCheck implements HealthCheck {
     @Override
     public HealthCheckResponse call() {
         return HealthCheckResponse.up("Aplicação Igreja API");
+
     }
 }

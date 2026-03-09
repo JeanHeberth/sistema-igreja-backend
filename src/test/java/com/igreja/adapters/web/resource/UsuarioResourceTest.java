@@ -22,6 +22,7 @@ import static io.restassured.RestAssured.given;
 @QuarkusTest
 class UsuarioResourceTest extends BaseIntegrationTest {
 
+
     @Inject
     AuthTestDataSupport authTestDataSupport;
 
