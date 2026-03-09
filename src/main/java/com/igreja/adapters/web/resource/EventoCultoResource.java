@@ -1,5 +1,6 @@
 package com.igreja.adapters.web.resource;
 
+import com.igreja.adapters.web.mapper.EventoCultoMapper;
 import com.igreja.application.service.EventoCultoService;
 import com.igreja.domain.model.EventoCulto;
 import com.igreja.adapters.web.record.response.EventoCultoResponse;

@@ -1,21 +1,16 @@
 package com.igreja.adapters.persistence;
 
+
 import com.igreja.domain.model.Hino;
 import com.igreja.domain.repository.HinoRepositorio;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-/**
- * Implementação em memória de HinoRepositorio para desenvolvimento e testes.
- */
 @ApplicationScoped
-public class FakeHinoRepositorio implements HinoRepositorio {
+public class HinoRepositorioImpl implements HinoRepositorio {
 
     private final Map<UUID, Hino> storage = new ConcurrentHashMap<>();
 
@@ -27,23 +22,19 @@ public class FakeHinoRepositorio implements HinoRepositorio {
     @Override
     public List<Hino> findByCoralId(UUID coralId) {
         return storage.values().stream()
-                .filter(h -> coralId != null && coralId.equals(h.getCoralId()))
+                .filter(hino -> coralId != null && coralId.equals(hino.getCoralId()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Hino> findByCultoId(UUID cultoId) {
         return storage.values().stream()
-                .filter(h -> cultoId != null && cultoId.equals(h.getCultoId()))
+                .filter(hino -> cultoId != null && cultoId.equals(hino.getCultoId()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public void salvar(Hino hino) {
-        if (hino.getId() == null) {
-            throw new IllegalArgumentException("Hino deve ter ID definido antes de salvar");
-        }
         storage.put(hino.getId(), hino);
     }
 }
-
