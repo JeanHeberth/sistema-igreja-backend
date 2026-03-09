@@ -1,5 +1,6 @@
 package com.igreja.application.service;
 
+import com.igreja.adapters.web.resource.support.factory.DomainTestFactory;
 import com.igreja.domain.model.EventoCulto;
 import com.igreja.domain.repository.EventoCultoRepositorio;
 import org.junit.jupiter.api.BeforeEach;

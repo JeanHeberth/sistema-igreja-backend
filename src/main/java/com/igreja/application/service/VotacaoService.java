@@ -2,6 +2,7 @@ package com.igreja.application.service;
 
 import com.igreja.domain.model.Voto;
 import com.igreja.domain.repository.VotoRepositorio;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import java.util.UUID;
 /**
  * Serviço de aplicação para operações de votação.
  */
+@ApplicationScoped
 public class VotacaoService {
 
     private final VotoRepositorio votoRepositorio;
@@ -41,4 +43,3 @@ public class VotacaoService {
         return votoRepositorio.findByHinoId(hinoId);
     }
 }
-
