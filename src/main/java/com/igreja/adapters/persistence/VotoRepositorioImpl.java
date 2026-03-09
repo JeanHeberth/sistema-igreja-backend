@@ -1,4 +1,4 @@
-package com.igreja.infrastructure;
+package com.igreja.adapters.persistence;
 
 import com.igreja.domain.model.Voto;
 import com.igreja.domain.repository.VotoRepositorio;
