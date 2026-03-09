@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTest
 class UsuarioResourceTest extends BaseIntegrationTest {
 
+
     @Inject
     AuthTestDataSupport authTestDataSupport;
 
