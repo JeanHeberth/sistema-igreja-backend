@@ -1,10 +1,11 @@
-package com.igreja.adapters.web;
+package com.igreja.adapters.web.resource;
 
-import com.igreja.adapters.web.dto.HinoRequest;
-import com.igreja.adapters.web.dto.HinoResponse;
+import com.igreja.adapters.web.record.request.HinoRequest;
+import com.igreja.adapters.web.record.response.HinoResponse;
 import com.igreja.application.service.HinoService;
 import com.igreja.domain.enums.HinoStatus;
 import com.igreja.domain.model.Hino;
+import com.igreja.adapters.web.mapper.HinoMapper;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -32,13 +33,13 @@ public class HinoResource {
 
         Hino hino = new Hino(
                 id,
-                request.getTitulo(),
-                request.getAutor(),
-                request.getLetra(),
-                request.getUrlMidia(),
-                request.getSubmetidoPor(),
-                request.getCoralId(),
-                request.getCultoId(),
+                request.titulo(),
+                request.autor(),
+                request.letra(),
+                request.urlMidia(),
+                request.submetidoPor(),
+                request.coralId(),
+                request.cultoId(),
                 HinoStatus.PENDENTE,
                 0,
                 agora,
@@ -46,7 +47,7 @@ public class HinoResource {
         );
 
         Hino salvo = hinoService.cadastrar(hino);
-        HinoResponse response = toResponse(salvo);
+        HinoResponse response = HinoMapper.toResponse(salvo);
 
         return Response.created(URI.create("/hinos/" + salvo.getId()))
                 .entity(response)
@@ -60,7 +61,7 @@ public class HinoResource {
         if (hinoOpt.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        return Response.ok(toResponse(hinoOpt.get())).build();
+        return Response.ok(HinoMapper.toResponse(hinoOpt.get())).build();
     }
 
     @GET
@@ -68,7 +69,7 @@ public class HinoResource {
     public Response listarPorCoral(@PathParam("coralId") UUID coralId) {
         List<Hino> hinos = hinoService.listarPorCoral(coralId);
         List<HinoResponse> response = hinos.stream()
-                .map(this::toResponse)
+                .map(HinoMapper::toResponse)
                 .collect(Collectors.toList());
         return Response.ok(response).build();
     }
@@ -78,27 +79,9 @@ public class HinoResource {
     public Response listarPorCulto(@PathParam("cultoId") UUID cultoId) {
         List<Hino> hinos = hinoService.listarPorCulto(cultoId);
         List<HinoResponse> response = hinos.stream()
-                .map(this::toResponse)
+                .map(HinoMapper::toResponse)
                 .collect(Collectors.toList());
         return Response.ok(response).build();
     }
 
-    private HinoResponse toResponse(Hino hino) {
-        return new HinoResponse(
-                hino.getId(),
-                hino.getTitulo(),
-                hino.getAutor(),
-                hino.getLetra(),
-                hino.getMidiaUrl(),
-                hino.getCoralId(),
-                hino.getCultoId(),
-                hino.getSubmetidoPor(),
-                hino.getStatus().name(),
-                0, // ajustar quando o domínio expuser o getter de votos
-                hino.getCriadoEm(),
-                hino.getAtualizadoEm()
-        );
-    }
-
 }
-

@@ -1,4 +1,25 @@
 quarkus:
   http:
     port: 8089
+    auth:
+      permission:
+        public:
+          paths: /auth/*, /q/*, /swagger-ui/*, /openapi/*
+          policy: permit
+        authenticated:
+          paths: /*
+          policy: authenticated
 
+  swagger-ui:
+    always-include: true
+
+mp:
+  jwt:
+    verify:
+      issuer: sistema-igreja-api
+
+smallrye:
+  jwt:
+    new-token:
+      issuer: sistema-igreja-api
+      lifespan: 3600

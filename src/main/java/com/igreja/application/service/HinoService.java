@@ -37,4 +37,3 @@ public class HinoService {
         return hinoRepositorio.findByCultoId(cultoId);
     }
 }
-

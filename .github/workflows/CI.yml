@@ -3,15 +3,13 @@ name: CI - Tests
 on:
   push:
     branches:
-      - develop
-      - main
+       [develop, main]
   pull_request:
     branches:
-      - main
-      - develop
+       [main, develop]
 
 jobs:
-  testUnitario:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,58 +26,8 @@ jobs:
       - name: Permissão para gradlew
         run: chmod +x ./gradlew
 
-      # Ajuste o filtro abaixo para o que você considerar realmente "unitário"
-      - name: Rodar testes unitários
-        run: |
-          ./gradlew clean test --no-daemon \
-            --tests "com.igreja.domain.*" \
-            --tests "com.igreja.*UnitTest*" || true
-
-  testService:
-    runs-on: ubuntu-latest
-    needs: testUnitario
-
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
-
-      - name: Configurar JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: gradle
-
-      - name: Permissão para gradlew
-        run: chmod +x ./gradlew
-
-      - name: Rodar testes de service
-        run: |
-          ./gradlew clean test --no-daemon \
-            --tests "com.igreja.application.service.*Test"
-
-  testController:
-    runs-on: ubuntu-latest
-    needs: testService
-
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
-
-      - name: Configurar JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: gradle
-
-      - name: Permissão para gradlew
-        run: chmod +x ./gradlew
-
-      - name: Rodar testes de controller
-        run: |
-          ./gradlew clean test --no-daemon \
-            --tests "com.igreja.adapters.web.*ResourceTest"
+      - name: Rodar testes
+        run: ./gradlew clean test --no-daemon
 
       # Notificação por e-mail em caso de falha de testes (desabilitado por enquanto)
       # - name: Enviar e-mail se testes falharem

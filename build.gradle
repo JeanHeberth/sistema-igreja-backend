@@ -21,6 +21,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-mongodb-panache'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     implementation 'io.quarkus:quarkus-smallrye-jwt'
+    implementation 'io.quarkus:quarkus-security'
     implementation 'io.quarkus:quarkus-hibernate-validator'
 
     // LangChain4j (IA/LLM) - desativado temporariamente por incompatibilidade de versão
@@ -40,6 +41,8 @@ dependencies {
     // Lombok (opcional)
     compileOnly "org.projectlombok:lombok:${versions.lombok}"
     annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+    testCompileOnly "org.projectlombok:lombok:${versions.lombok}"
+    testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 }
 
 group = 'br.com'
