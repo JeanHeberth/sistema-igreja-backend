@@ -1,11 +1,11 @@
 package com.igreja.adapters.web.resource;
 
 import com.igreja.adapters.web.record.request.HinoRequest;
-import com.igreja.adapters.web.record.request.HinoResponse;
+import com.igreja.adapters.web.record.response.HinoResponse;
 import com.igreja.application.service.HinoService;
 import com.igreja.domain.enums.HinoStatus;
 import com.igreja.domain.model.Hino;
-import com.igreja.mappers.HinoMapper;
+import com.igreja.adapters.web.mapper.HinoMapper;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;

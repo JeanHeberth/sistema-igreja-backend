@@ -1,4 +1,4 @@
-package com.igreja.application.service;
+package com.igreja.adapters.web.resource.support.factory;
 
 import com.igreja.domain.enums.CultoStatus;
 import com.igreja.domain.enums.HinoStatus;
@@ -19,7 +19,6 @@ import java.util.UUID;
 public final class DomainTestFactory {
 
     private DomainTestFactory() {
-        // Classe utilitária
     }
 
     public static Usuario novoUsuarioDefault() {
@@ -40,6 +39,33 @@ public final class DomainTestFactory {
                 email,
                 "senha_hash_teste",
                 Set.of(Papel.MEMBRO),
+                UUID.randomUUID()
+        );
+    }
+
+    public static Usuario novoAdminParaLogin() {
+        return new Usuario(
+                UUID.randomUUID(),
+                "Administrador",
+                "admin@email.com",
+                "admin123",
+                Set.of(Papel.ADMIN),
+                UUID.randomUUID()
+        );
+    }
+
+    public static Usuario novoUsuario(
+            String nome,
+            String email,
+            String senha,
+            Set<Papel> papeis
+    ) {
+        return new Usuario(
+                UUID.randomUUID(),
+                nome,
+                email,
+                senha,
+                papeis,
                 UUID.randomUUID()
         );
     }
@@ -98,11 +124,11 @@ public final class DomainTestFactory {
 
     public static EventoCulto novoEventoCultoComHinos(List<UUID> hinosSelecionados) {
         return new EventoCulto(
-            UUID.randomUUID(),
-            Instant.now().plusSeconds(3600),
-            "Culto com Hinos",
-            CultoStatus.RASCUNHO,
-            hinosSelecionados
+                UUID.randomUUID(),
+                Instant.now().plusSeconds(3600),
+                "Culto com Hinos",
+                CultoStatus.RASCUNHO,
+                hinosSelecionados
         );
     }
 
@@ -123,4 +149,3 @@ public final class DomainTestFactory {
         return novoVoto(hinoId, usuarioId, cultoId);
     }
 }
-

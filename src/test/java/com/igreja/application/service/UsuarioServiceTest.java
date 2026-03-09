@@ -1,5 +1,6 @@
 package com.igreja.application.service;
 
+import com.igreja.adapters.web.resource.support.factory.DomainTestFactory;
 import com.igreja.domain.model.Usuario;
 import com.igreja.domain.repository.UsuarioRepositorio;
 import org.junit.jupiter.api.BeforeEach;

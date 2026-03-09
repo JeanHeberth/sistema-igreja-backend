@@ -21,6 +21,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-mongodb-panache'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     implementation 'io.quarkus:quarkus-smallrye-jwt'
+    implementation 'io.quarkus:quarkus-security'
     implementation 'io.quarkus:quarkus-hibernate-validator'
 
     // LangChain4j (IA/LLM) - desativado temporariamente por incompatibilidade de versão

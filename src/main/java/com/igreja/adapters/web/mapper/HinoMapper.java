@@ -1,7 +1,7 @@
-package com.igreja.mappers;
+package com.igreja.adapters.web.mapper;
 
 import com.igreja.domain.model.Hino;
-import com.igreja.adapters.web.record.request.HinoResponse;
+import com.igreja.adapters.web.record.response.HinoResponse;
 import com.igreja.domain.enums.HinoStatus;
 
 public class HinoMapper {

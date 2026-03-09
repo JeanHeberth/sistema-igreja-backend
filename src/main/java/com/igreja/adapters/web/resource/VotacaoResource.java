@@ -2,7 +2,7 @@ package com.igreja.adapters.web.resource;
 
 import com.igreja.application.service.VotacaoService;
 import com.igreja.domain.model.Voto;
-import com.igreja.mappers.VotoMapper;
+import com.igreja.adapters.web.mapper.VotoMapper;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
