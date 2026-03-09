@@ -23,10 +23,11 @@ public class UsuarioService {
     }
 
     public Usuario cadastrar(Usuario usuario) {
-        if (usuarioRepositorio.findByEmail(usuario.getEmail()).isPresent()) {
+        boolean salvou = usuarioRepositorio.salvarSeEmailNaoExistir(usuario);
+
+        if (!salvou) {
             throw new RecursoDuplicadoException("Email já cadastrado");
         }
-        usuarioRepositorio.salvar(usuario);
         return usuario;
     }
 

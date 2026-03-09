@@ -1,7 +1,5 @@
-package com.igreja.adapters.web.resource.support.auth;
+package com.igreja.adapters.web.support.auth;
 
-import com.igreja.adapters.web.resource.support.auth.AuthRequestFactory;
-import com.igreja.adapters.web.resource.support.auth.AuthTestConstants;
 import io.restassured.http.ContentType;
 
 import static io.restassured.RestAssured.given;

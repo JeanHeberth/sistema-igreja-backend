@@ -9,5 +9,6 @@ public interface UsuarioRepositorio {
     Optional<Usuario> findById(UUID id);
     Optional<Usuario> findByEmail(String email);
     void salvar(Usuario usuario);
+    boolean salvarSeEmailNaoExistir(Usuario usuario);
 }
 
