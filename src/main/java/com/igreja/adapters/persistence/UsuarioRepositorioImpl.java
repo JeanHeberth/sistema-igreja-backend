@@ -4,18 +4,11 @@ import com.igreja.domain.model.Usuario;
 import com.igreja.domain.repository.UsuarioRepositorio;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Implementação em memória simples de UsuarioRepositorio, usada por enquanto
- * apenas para satisfazer a injeção de dependência e permitir subir o contexto
- * do Quarkus em testes e em desenvolvimento.
- */
 @ApplicationScoped
-public class FakeUsuarioRepositorio implements UsuarioRepositorio {
+public class UsuarioRepositorioImpl implements UsuarioRepositorio {
 
     private final Map<UUID, Usuario> storage = new ConcurrentHashMap<>();
 
@@ -27,16 +20,25 @@ public class FakeUsuarioRepositorio implements UsuarioRepositorio {
     @Override
     public Optional<Usuario> findByEmail(String email) {
         return storage.values().stream()
-                .filter(u -> email != null && email.equals(u.getEmail()))
+                .filter(usuario -> Objects.equals(usuario.getEmail(), email))
                 .findFirst();
     }
 
     @Override
     public void salvar(Usuario usuario) {
-        if (usuario.getId() == null) {
-            throw new IllegalArgumentException("Usuário deve ter ID definido antes de salvar");
-        }
         storage.put(usuario.getId(), usuario);
     }
-}
 
+    @Override
+    public synchronized boolean salvarSeEmailNaoExistir(Usuario usuario) {
+        boolean emailJaExiste = storage.values().stream()
+                .anyMatch(u -> Objects.equals(u.getEmail(), usuario.getEmail()));
+
+        if (emailJaExiste) {
+            return false;
+        }
+
+        storage.put(usuario.getId(), usuario);
+        return true;
+    }
+}

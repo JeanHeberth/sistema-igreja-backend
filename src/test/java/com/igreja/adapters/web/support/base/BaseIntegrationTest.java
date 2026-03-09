@@ -1,7 +1,6 @@
-package com.igreja.adapters.web.resource.support.base;
+package com.igreja.adapters.web.support.base;
 
-import com.igreja.adapters.web.resource.support.dataBase.TestDatabaseCleaner;
-import io.quarkus.test.junit.QuarkusTest;
+import com.igreja.adapters.web.support.dataBase.TestDatabaseCleaner;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 

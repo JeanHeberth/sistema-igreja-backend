@@ -1,4 +1,4 @@
-package com.igreja.adapters.web.resource.support.dataBase;
+package com.igreja.adapters.web.support.dataBase;
 
 import com.mongodb.client.MongoClient;
 import jakarta.enterprise.context.ApplicationScoped;

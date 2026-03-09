@@ -1,6 +1,6 @@
-package com.igreja.adapters.web.resource.support.auth;
+package com.igreja.adapters.web.support.auth;
 
-import com.igreja.adapters.web.resource.support.factory.DomainTestFactory;
+import com.igreja.adapters.web.support.factory.DomainTestFactory;
 import com.igreja.domain.model.Usuario;
 import com.igreja.domain.repository.UsuarioRepositorio;
 import jakarta.enterprise.context.ApplicationScoped;
