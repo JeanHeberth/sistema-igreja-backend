@@ -1,4 +1,4 @@
-package com.igreja.adapters.web.resource.support.factory;
+package com.igreja.adapters.web.support.factory;
 
 import com.igreja.adapters.web.record.request.HinoRequest;
 

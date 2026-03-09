@@ -1,6 +1,7 @@
 package com.igreja.application.service;
 
-import com.igreja.adapters.web.resource.support.factory.DomainTestFactory;
+import com.igreja.adapters.web.exception.RecursoDuplicadoException;
+import com.igreja.adapters.web.support.factory.DomainTestFactory;
 import com.igreja.domain.model.Usuario;
 import com.igreja.domain.repository.UsuarioRepositorio;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.igreja.adapters.web.support.factory.DomainTestFactory.novoUsuarioComEmail;
+import static com.igreja.adapters.web.support.factory.DomainTestFactory.novoUsuarioDefault;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -25,18 +28,20 @@ class UsuarioServiceTest {
 
     @Test
     void cadastrar_deveSalvarEDevolverUsuario() {
-        Usuario usuario = DomainTestFactory.novoUsuarioDefault();
+        Usuario usuario = novoUsuarioDefault();
+
+        when(usuarioRepositorio.salvarSeEmailNaoExistir(usuario)).thenReturn(true);
 
         Usuario resultado = usuarioService.cadastrar(usuario);
 
         assertSame(usuario, resultado);
-        verify(usuarioRepositorio, times(1)).salvar(usuario);
+        verify(usuarioRepositorio, times(1)).salvarSeEmailNaoExistir(usuario);
     }
 
     @Test
     void buscarPorId_deveDelegarParaRepositorio() {
         UUID id = UUID.randomUUID();
-        Usuario usuario = DomainTestFactory.novoUsuarioDefault();
+        Usuario usuario = novoUsuarioDefault();
         when(usuarioRepositorio.findById(id)).thenReturn(Optional.of(usuario));
 
         Optional<Usuario> resultado = usuarioService.buscarPorId(id);
@@ -49,7 +54,7 @@ class UsuarioServiceTest {
     @Test
     void buscarPorEmail_deveDelegarParaRepositorio() {
         String email = "usuario.teste@example.com";
-        Usuario usuario = DomainTestFactory.novoUsuarioComEmail(email);
+        Usuario usuario = novoUsuarioComEmail(email);
         when(usuarioRepositorio.findByEmail(email)).thenReturn(Optional.of(usuario));
 
         Optional<Usuario> resultado = usuarioService.buscarPorEmail(email);
@@ -57,6 +62,21 @@ class UsuarioServiceTest {
         assertTrue(resultado.isPresent());
         assertSame(usuario, resultado.get());
         verify(usuarioRepositorio, times(1)).findByEmail(email);
+    }
+
+    @Test
+    void cadastrar_quandoEmailJaExiste_deveLancarExcecao() {
+        Usuario usuario = novoUsuarioDefault();
+
+        when(usuarioRepositorio.salvarSeEmailNaoExistir(usuario)).thenReturn(false);
+
+        RecursoDuplicadoException exception = assertThrows(
+                RecursoDuplicadoException.class,
+                () -> usuarioService.cadastrar(usuario)
+        );
+
+        assertEquals("Email já cadastrado", exception.getMessage());
+        verify(usuarioRepositorio, times(1)).salvarSeEmailNaoExistir(usuario);
     }
 }
 

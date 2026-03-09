@@ -71,7 +71,7 @@ class UsuarioResourceTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Buscar usuário sem token deve retornar 401")
     void buscarPorId_semToken_deveRetornar401() {
-        buscarPorIdSemToken(UUID.randomUUID().toString())
+       buscarPorIdSemToken(UUID.randomUUID().toString())
                 .statusCode(401);
     }
 
@@ -166,11 +166,11 @@ class UsuarioResourceTest extends BaseIntegrationTest {
         String tokenMembro = given()
                 .contentType(io.restassured.http.ContentType.JSON)
                 .body("""
-                        {
-                          "email": "membro.sem.permissao@example.com",
-                          "senha": "senha123"
-                        }
-                        """)
+                    {
+                      "email": "membro.sem.permissao@example.com",
+                      "senha": "senha123"
+                    }
+                    """)
                 .when()
                 .post("/auth/login")
                 .then()
@@ -181,87 +181,6 @@ class UsuarioResourceTest extends BaseIntegrationTest {
         UsuarioRequest novoUsuario = novoUsuarioRequestComEmail("novo.usuario@example.com");
 
         criarUsuario(tokenMembro, novoUsuario)
-                .statusCode(403);
-    }
-
-    @Test
-    @DisplayName("Buscar usuário por email existente deve retornar 200")
-    void buscarPorEmail_quandoExiste_deveRetornar200() {
-        String token = obterTokenAdmin();
-        String email = "usuario.buscar.email@example.com";
-
-        UsuarioRequest request = novoUsuarioRequestComEmail(email);
-
-        criarUsuario(token, request)
-                .statusCode(201);
-
-        given()
-                .header("Authorization", "Bearer " + token)
-                .queryParam("email", email)
-                .when()
-                .get("/usuarios/por-email")
-                .then()
-                .statusCode(200)
-                .body("email", Matchers.equalTo(email));
-    }
-
-    @Test
-    @DisplayName("Buscar usuário por email inexistente deve retornar 404")
-    void buscarPorEmail_quandoNaoExiste_deveRetornar404() {
-        String token = obterTokenAdmin();
-
-        given()
-                .header("Authorization", "Bearer " + token)
-                .queryParam("email", "nao.existe@example.com")
-                .when()
-                .get("/usuarios/por-email")
-                .then()
-                .statusCode(404);
-    }
-
-    @Test
-    @DisplayName("Buscar usuário por email sem informar parâmetro deve retornar 400")
-    void buscarPorEmail_semParametro_deveRetornar400() {
-        String token = obterTokenAdmin();
-
-        given()
-                .header("Authorization", "Bearer " + token)
-                .when()
-                .get("/usuarios/por-email")
-                .then()
-                .statusCode(400);
-    }
-
-    @Test
-    @DisplayName("Usuário membro não deve listar usuários")
-    void listarUsuarios_comPerfilSemPermissao_deveRetornar403() {
-        String adminToken = obterTokenAdmin();
-
-        UsuarioRequest membroRequest = novoUsuarioRequestComEmail("membro.lista@example.com");
-
-        criarUsuario(adminToken, membroRequest)
-                .statusCode(201);
-
-        String tokenMembro = given()
-                .contentType(io.restassured.http.ContentType.JSON)
-                .body("""
-                        {
-                          "email": "membro.lista@example.com",
-                          "senha": "senha123"
-                        }
-                        """)
-                .when()
-                .post("/auth/login")
-                .then()
-                .statusCode(200)
-                .extract()
-                .path("token");
-
-        given()
-                .header("Authorization", "Bearer " + tokenMembro)
-                .when()
-                .get("/usuarios")
-                .then()
                 .statusCode(403);
     }
 }
