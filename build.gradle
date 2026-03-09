@@ -23,6 +23,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-jwt'
     implementation 'io.quarkus:quarkus-security'
     implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-smallrye-health'
 
     // LangChain4j (IA/LLM) - desativado temporariamente por incompatibilidade de versão
     // implementation "io.quarkiverse.langchain4j:quarkus-langchain4j-openai:${versions.langchain4j}"
