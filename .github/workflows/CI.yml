@@ -1,17 +1,21 @@
 name: CI - Tests
 
-
 on:
   push:
     branches:
-       [develop, main]
+      - develop
+      - main
   pull_request:
     branches:
-       [main, develop]
+      - main
+      - develop
 
 jobs:
   test-resource:
+    name: Testes Resource
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
@@ -23,15 +27,47 @@ jobs:
           java-version: '21'
           cache: gradle
 
+      - name: Validar Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v3
+
       - name: Permissão para gradlew
         run: chmod +x ./gradlew
+
+      - name: Limpar e compilar classes de teste
+        run: ./gradlew clean testClasses --no-daemon
 
       - name: Rodar testes Resource
-        run: ./gradlew clean test --no-daemon --tests '*Resource*'
+        run: ./gradlew test --no-daemon --tests "*ResourceTest"
+
+      - name: Gerar relatório JaCoCo
+        if: always()
+        run: ./gradlew jacocoTestReport --no-daemon
+
+      - name: Publicar relatório de testes Resource
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report-resource
+          path: |
+            build/reports/tests/
+            build/test-results/
+          if-no-files-found: warn
+
+      - name: Publicar relatório JaCoCo Resource
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report-resource
+          path: |
+            build/reports/jacoco/
+          if-no-files-found: warn
 
   test-service:
+    name: Testes Service
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: test-resource
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
@@ -43,33 +79,37 @@ jobs:
           java-version: '21'
           cache: gradle
 
+      - name: Validar Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v3
+
       - name: Permissão para gradlew
         run: chmod +x ./gradlew
 
-      - name: Rodar testes Service
-        run: ./gradlew clean test --no-daemon --tests '*Service*'
+      - name: Limpar e compilar classes de teste
+        run: ./gradlew clean testClasses --no-daemon
 
-      # Notificação por e-mail em caso de falha de testes (desabilitado por enquanto)
-      # - name: Enviar e-mail se testes falharem
-      #   if: failure()
-      #   uses: dawidd6/action-send-mail@v3
-      #   with:
-      #     # servidor SMTP (exemplo: Gmail)
-      #     server_address: ${{ secrets.SMTP_SERVER }}
-      #     server_port: ${{ secrets.SMTP_PORT }}
-      #     username: ${{ secrets.SMTP_USERNAME }}
-      #     password: ${{ secrets.SMTP_PASSWORD }}
-      #     subject: "[CI] Falha nos testes - ${{ github.repository }} - ${{ github.ref_name }}"
-      #     from: ${{ secrets.SMTP_FROM }}
-      #     to: ${{ secrets.TESTS_ALERT_EMAIL }}
-      #     secure: true
-      #     priority: high
-      #     body: |
-      #       Os testes falharam no workflow GitHub Actions.
-      #
-      #       Repositório: ${{ github.repository }}
-      #       Branch/Ref:  ${{ github.ref_name }}
-      #       Evento:      ${{ github.event_name }}
-      #       Run:         https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      #
-      #       Verifique os logs em "Rodar testes" para mais detalhes.
+      - name: Rodar testes Service
+        run: ./gradlew test --no-daemon --tests "*ServiceTest"
+
+      - name: Gerar relatório JaCoCo
+        if: always()
+        run: ./gradlew jacocoTestReport --no-daemon
+
+      - name: Publicar relatório de testes Service
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report-service
+          path: |
+            build/reports/tests/
+            build/test-results/
+          if-no-files-found: warn
+
+      - name: Publicar relatório JaCoCo Service
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report-service
+          path: |
+            build/reports/jacoco/
+          if-no-files-found: warn
