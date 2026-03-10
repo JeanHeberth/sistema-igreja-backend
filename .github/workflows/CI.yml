@@ -36,12 +36,8 @@ jobs:
       - name: Limpar e compilar classes de teste
         run: ./gradlew clean testClasses --no-daemon
 
-      - name: Rodar testes Resource + JaCoCo
+      - name: Rodar testes Resource
         run: ./gradlew test --no-daemon --tests "*ResourceTest"
-
-      - name: Gerar relatório JaCoCo
-        if: always()
-        run: ./gradlew jacocoTestReport --no-daemon --tests "*ResourceTest"
 
       - name: Publicar relatório de testes Resource
         if: always()
@@ -88,12 +84,8 @@ jobs:
       - name: Limpar e compilar classes de teste
         run: ./gradlew clean testClasses --no-daemon
 
-      - name: Rodar testes Service + JaCoCo
+      - name: Rodar testes Service
         run: ./gradlew test --no-daemon --tests "*ServiceTest"
-
-      - name: Gerar relatório JaCoCo
-        if: always()
-        run: ./gradlew jacocoTestReport --no-daemon
 
       - name: Publicar relatório de testes Service
         if: always()
