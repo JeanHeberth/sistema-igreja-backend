@@ -1,9 +1,9 @@
 package com.igreja.adapters.web.resource;
 
 import com.igreja.adapters.web.record.request.UsuarioRequest;
-import com.igreja.adapters.web.resource.support.auth.AuthTestDataSupport;
-import com.igreja.adapters.web.resource.support.base.BaseIntegrationTest;
-import com.igreja.adapters.web.resource.support.factory.UsuarioRequestFactory;
+
+import com.igreja.adapters.web.support.auth.AuthTestDataSupport;
+import com.igreja.adapters.web.support.base.BaseIntegrationTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
@@ -15,8 +15,9 @@ import org.junit.jupiter.api.Test;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.igreja.adapters.web.resource.support.auth.AuthTokenSupport.obterTokenAdmin;
-import static com.igreja.adapters.web.resource.support.factory.UsuarioRequestFactory.*;
+
+import static com.igreja.adapters.web.support.auth.AuthTokenSupport.obterTokenAdmin;
+import static com.igreja.adapters.web.support.factory.UsuarioRequestFactory.*;
 import static io.restassured.RestAssured.given;
 
 @QuarkusTest
