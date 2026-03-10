@@ -13,7 +13,7 @@ on:
 jobs:
   test-regression:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
 
     steps:
       - name: Checkout código
@@ -41,13 +41,9 @@ jobs:
       - name: Rodar testes Service
         run: ./gradlew test --no-daemon --tests "*ServiceTest"
 
-      - name: Rodar testes Mapper
-        run: ./gradlew test --no-daemon --tests "*MapperTest"
-        continue-on-error: true
-
-      - name: Rodar testes Repository
-        run: ./gradlew test --no-daemon --tests "*RepositoryTest"
-        continue-on-error: true
+      - name: Gerar relatório JaCoCo
+        if: always()
+        run: ./gradlew jacocoTestReport --no-daemon
 
       - name: Publicar relatório de testes
         if: always()
@@ -57,4 +53,13 @@ jobs:
           path: |
             build/reports/tests/
             build/test-results/
+          if-no-files-found: warn
+
+      - name: Publicar relatório JaCoCo
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: |
+            build/reports/jacoco/
           if-no-files-found: warn
