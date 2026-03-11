@@ -10,6 +10,10 @@ on:
       - main
       - develop
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   test-resource:
     name: Testes Resource
@@ -66,6 +70,16 @@ jobs:
             build/reports/jacoco/
           if-no-files-found: warn
 
+      - name: Publicar cobertura Resource no PR
+        if: github.event_name == 'pull_request'
+        uses: madrapps/jacoco-report@v1.6.1
+        with:
+          paths: build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Cobertura JaCoCo - Resource"
+          min-coverage-overall: 0
+          min-coverage-changed-files: 0
+
   test-service:
     name: Testes Service
     runs-on: ubuntu-latest
@@ -121,3 +135,13 @@ jobs:
           path: |
             build/reports/jacoco/
           if-no-files-found: warn
+
+      - name: Publicar cobertura Service no PR
+        if: github.event_name == 'pull_request'
+        uses: madrapps/jacoco-report@v1.6.1
+        with:
+          paths: build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Cobertura JaCoCo - Service"
+          min-coverage-overall: 0
+          min-coverage-changed-files: 0
