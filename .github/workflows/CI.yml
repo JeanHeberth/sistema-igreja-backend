@@ -15,7 +15,6 @@ permissions:
   pull-requests: write
 
 jobs:
-
   test-resource:
     name: Testes Resource
     runs-on: ubuntu-latest
@@ -44,12 +43,15 @@ jobs:
       - name: Rodar testes Resource
         run: ./gradlew test --no-daemon --tests "*ResourceTest"
 
-      - name: Upload cobertura Resource
+      - name: Publicar relatório de testes Resource
+        if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: jacoco-resource
-          path: build/reports/jacoco/test/jacocoTestReport.xml
-
+          name: test-report-resource
+          path: |
+            build/reports/tests/
+            build/test-results/
+          if-no-files-found: warn
 
   test-service:
     name: Testes Service
@@ -80,42 +82,53 @@ jobs:
       - name: Rodar testes Service
         run: ./gradlew test --no-daemon --tests "*ServiceTest"
 
-      - name: Upload cobertura Service
+      - name: Publicar relatório de testes Service
+        if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: jacoco-service
-          path: build/reports/jacoco/test/jacocoTestReport.xml
-
+          name: test-report-service
+          path: |
+            build/reports/tests/
+            build/test-results/
+          if-no-files-found: warn
 
   coverage-report:
     name: Coverage Report
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     needs: [test-resource, test-service]
 
     steps:
-
       - name: Checkout código
         uses: actions/checkout@v5
 
-      - name: Download cobertura Resource
-        uses: actions/download-artifact@v5
+      - name: Configurar JDK 21
+        uses: actions/setup-java@v5
         with:
-          name: jacoco-resource
-          path: coverage/resource
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
 
-      - name: Download cobertura Service
-        uses: actions/download-artifact@v5
-        with:
-          name: jacoco-service
-          path: coverage/service
+      - name: Validar Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v5
 
-      - name: Gerar comentário único de cobertura
+      - name: Permissão para gradlew
+        run: chmod +x ./gradlew
+
+      - name: Gerar cobertura consolidada
+        run: ./gradlew clean test jacocoTestReport --no-daemon
+
+      - name: Verificar arquivos JaCoCo
+        run: |
+          echo "=== build/reports/jacoco/test ==="
+          ls -R build/reports/jacoco/test || true
+
+      - name: Publicar cobertura no PR
+        if: github.event_name == 'pull_request'
         uses: madrapps/jacoco-report@v1.6.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          paths: |
-            coverage/resource/jacocoTestReport.xml
-            coverage/service/jacocoTestReport.xml
+          paths: build/reports/jacoco/test/jacocoTestReport.xml
           title: "Cobertura Total JaCoCo"
 
       - name: Gerar badge de coverage
@@ -126,7 +139,18 @@ jobs:
           generate-branches-badge: true
 
       - name: Commit badge no repositório
+        if: github.ref == 'refs/heads/main'
         uses: EndBug/add-and-commit@v9
         with:
           add: 'badges/*.svg'
-          message: 'Atualiza badge de coverage'
+          message: 'chore(ci): atualiza badges de coverage'
+
+      - name: Publicar relatório JaCoCo consolidado
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: jacoco-report-total
+          path: |
+            build/reports/jacoco/
+            badges/
+          if-no-files-found: warn
