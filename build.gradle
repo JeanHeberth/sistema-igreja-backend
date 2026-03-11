@@ -1,9 +1,13 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id 'io.quarkus'
 }
 
 apply from: 'versions.gradle'
+
+group = 'br.com'
+version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -25,9 +29,6 @@ dependencies {
     implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation 'io.quarkus:quarkus-smallrye-health'
 
-    // LangChain4j (IA/LLM) - desativado temporariamente por incompatibilidade de versão
-    // implementation "io.quarkiverse.langchain4j:quarkus-langchain4j-openai:${versions.langchain4j}"
-
     // Testcontainers para integração com MongoDB
     testImplementation "org.testcontainers:mongodb:${versions.testcontainers}"
     testImplementation "org.testcontainers:junit-jupiter:${versions.testcontainers}"
@@ -39,15 +40,12 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'org.mockito:mockito-core:5.11.0'
 
-    // Lombok (opcional)
+    // Lombok
     compileOnly "org.projectlombok:lombok:${versions.lombok}"
     annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
     testCompileOnly "org.projectlombok:lombok:${versions.lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 }
-
-group = 'br.com'
-version = '1.0-SNAPSHOT'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -61,4 +59,26 @@ compileJava {
 
 compileTestJava {
     options.encoding = 'UTF-8'
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    executionData(fileTree(layout.buildDirectory).include(
+            "jacoco/*.exec",
+            "outputs/unit_test_code_coverage/*.exec"
+    ))
+
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = true
+    }
 }
