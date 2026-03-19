@@ -60,3 +60,8 @@ If you want to learn more about building native executables, please consult <htt
 Easily start your REST Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+
+## Build Status
+
+![Coverage](badges/jacoco.svg)
+![Branches](badges/branches.svg)
