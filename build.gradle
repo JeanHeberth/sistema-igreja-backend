@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'jacoco'
     id 'io.quarkus'
+    id 'io.qameta.allure' version '2.11.2'
 }
 
 apply from: 'versions.gradle'
@@ -37,6 +38,16 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'org.mockito:mockito-core:5.11.0'
 
+    // Allure para JUnit5
+    testImplementation 'io.qameta.allure:allure-junit5:2.24.0'
+    testImplementation 'io.qameta.allure:allure-assertj:2.24.0'
+
+        allure {
+            version = '2.24.0'
+            useJUnit5 {
+                version = '2.24.0'
+            }
+        }
     // Lombok
     compileOnly "org.projectlombok:lombok:${versions.lombok}"
     annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
