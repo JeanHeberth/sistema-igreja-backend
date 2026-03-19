@@ -15,6 +15,7 @@ permissions:
   pull-requests: write
 
 jobs:
+
   test-resource:
     name: Testes Resource
     runs-on: ubuntu-latest
@@ -52,6 +53,7 @@ jobs:
             build/reports/tests/
             build/test-results/
           if-no-files-found: warn
+
 
   test-service:
     name: Testes Service
@@ -92,6 +94,7 @@ jobs:
             build/test-results/
           if-no-files-found: warn
 
+
   coverage-report:
     name: Coverage Report
     runs-on: ubuntu-latest
@@ -120,7 +123,7 @@ jobs:
 
       - name: Verificar arquivos JaCoCo
         run: |
-          echo "=== build/reports/jacoco/test ==="
+          echo "=== JaCoCo Reports ==="
           ls -R build/reports/jacoco/test || true
 
       - name: Publicar cobertura no PR
@@ -130,6 +133,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           paths: build/reports/jacoco/test/jacocoTestReport.xml
           title: "Cobertura Total JaCoCo"
+          min-coverage-overall: 40
+          min-coverage-changed-files: 50
 
       - name: Gerar badge de coverage
         uses: cicirello/jacoco-badge-generator@v2
@@ -145,7 +150,7 @@ jobs:
           add: 'badges/*.svg'
           message: 'chore(ci): atualiza badges de coverage'
 
-      - name: Publicar relatório JaCoCo consolidado
+      - name: Publicar relatório JaCoCo
         if: always()
         uses: actions/upload-artifact@v6
         with:
