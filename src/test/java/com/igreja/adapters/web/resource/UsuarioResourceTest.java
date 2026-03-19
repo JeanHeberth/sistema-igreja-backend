@@ -5,7 +5,6 @@ import com.igreja.adapters.web.record.request.UsuarioRequest;
 import com.igreja.adapters.web.support.auth.AuthTestDataSupport;
 import com.igreja.adapters.web.support.base.BaseIntegrationTest;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
