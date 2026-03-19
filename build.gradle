@@ -2,12 +2,10 @@ plugins {
     id 'java'
     id 'jacoco'
     id 'io.quarkus'
+    id 'io.qameta.allure' version '2.11.2'
 }
 
 apply from: 'versions.gradle'
-
-group = 'br.com'
-version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -29,23 +27,36 @@ dependencies {
     implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation 'io.quarkus:quarkus-smallrye-health'
 
-    // Testcontainers para integração com MongoDB
+    // Testcontainers
     testImplementation "org.testcontainers:mongodb:${versions.testcontainers}"
     testImplementation "org.testcontainers:junit-jupiter:${versions.testcontainers}"
 
-    // JUnit 5 para testes
+    // Testes
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.quarkus:quarkus-junit5-mockito'
     testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'org.mockito:mockito-core:5.11.0'
 
+    // Allure para JUnit5
+    testImplementation 'io.qameta.allure:allure-junit5:2.24.0'
+    testImplementation 'io.qameta.allure:allure-assertj:2.24.0'
+
+        allure {
+            version = '2.24.0'
+            useJUnit5 {
+                version = '2.24.0'
+            }
+        }
     // Lombok
     compileOnly "org.projectlombok:lombok:${versions.lombok}"
     annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
     testCompileOnly "org.projectlombok:lombok:${versions.lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 }
+
+group = 'br.com'
+version = '1.0-SNAPSHOT'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -61,24 +72,38 @@ compileTestJava {
     options.encoding = 'UTF-8'
 }
 
-jacoco {
-    toolVersion = "0.8.12"
-}
-
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
 
+jacoco {
+    toolVersion = "0.8.12"
+}
+
 jacocoTestReport {
-    executionData(fileTree(layout.buildDirectory).include(
-            "jacoco/*.exec",
-            "outputs/unit_test_code_coverage/*.exec"
-    ))
+    dependsOn test
 
     reports {
         xml.required = true
         html.required = true
-        csv.required = true
+        csv.required = false
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn test
+
+    violationRules {
+        rule {
+            enabled = true
+            element = 'BUNDLE'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.60
+            }
+        }
     }
 }
