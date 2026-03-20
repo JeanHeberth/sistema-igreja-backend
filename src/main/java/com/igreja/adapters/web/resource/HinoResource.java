@@ -1,4 +1,4 @@
-package com.igreja.adapters.web;
+package com.igreja.adapters.web.resource;
 
 import com.igreja.adapters.web.record.request.HinoRequest;
 import com.igreja.adapters.web.record.response.HinoResponse;
@@ -85,3 +85,4 @@ public class HinoResource {
     }
 
 }
+

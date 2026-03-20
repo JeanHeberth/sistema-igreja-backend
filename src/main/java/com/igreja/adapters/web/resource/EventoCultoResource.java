@@ -1,4 +1,4 @@
-package com.igreja.adapters.web;
+package com.igreja.adapters.web.resource;
 
 import com.igreja.adapters.web.mapper.EventoCultoMapper;
 import com.igreja.application.service.EventoCultoService;
