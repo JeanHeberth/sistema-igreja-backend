@@ -1,4 +1,4 @@
-package com.igreja.adapters.web;
+package com.igreja.adapters.web.resource;
 
 import com.igreja.application.service.AuthService;
 import jakarta.annotation.security.PermitAll;

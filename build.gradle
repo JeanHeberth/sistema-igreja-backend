@@ -37,6 +37,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'org.mockito:mockito-core:5.11.0'
+    testImplementation 'org.assertj:assertj-core:3.25.3'
 
     // Allure para JUnit5
     testImplementation 'io.qameta.allure:allure-junit5:2.24.0'
